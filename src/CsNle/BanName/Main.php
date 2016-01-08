@@ -61,8 +61,8 @@ public function onPlayerJoin(PlayerJoinEvent $event) {
 			$pn = $p->getName();
 			if(in_array($pn,$bnames)){
 				$p->kick($reason);
-				msgOP("[BanName] ".$pn." have been kick by BanName Rules.");
-				msgOP("[BanName] Reason:".$reason.".");
+				msgOP("[BanName] ".$pn." have been kick by BanName Rules.",true);
+				msgOP("[BanName] Reason:".$reason.".",true);
 			}
 }
 
@@ -188,13 +188,16 @@ public function is_BanName($name) {
 
 //PLUGINHELPER
 
-public function msgOP($msg) {
+public function msgOP($msg,$console = false) {
 	if(!isset($msg)) { return false; }
 	$allp = Server::getOnlinePlayers();
 	foreach($allp as $p){
 		if(Server::isOp($p)){
 			$p->sendMessage($msg);
 		}
+	}
+	if($console){
+		$this->getLogger()->info($msg);
 	}
 }
 
