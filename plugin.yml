@@ -1,0 +1,15 @@
+name: BanName
+main: CsNle\BanName\Main
+version: 1.0.0
+api: [1.0.0]
+load: POSTWORLD
+author: CsNle
+commands: 
+ BanName.bn:
+  description: "Main Command.Type /bn help to get help page."
+  default: OP
+permissions:
+ BanName.*:
+  description: "BanName"
+  default: true
+
