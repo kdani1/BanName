@@ -26,6 +26,24 @@ class Main extends PluginBase implements Listener
 		@mkdir($this->path);
 		$this->cfg = new Config($this->path."config.yml", Config::YAML,array());
 		
+		//update:length
+		if(!$this->cfg->exists("Length"))
+		{
+			$this->cfg->set("Length","12");
+			$this->cfg->save();
+			
+             $this->getLogger()->info(" [BanName] Name length limit set to default.");
+		}
+		if(!$this->cfg->exists("Lreason"))
+		{
+			$this->cfg->set("reason","Your name too long!");
+			$this->cfg->save();
+			
+             $this->getLogger()->info(" [BanName] Name length limit reason set to default.");
+		}
+		
+		//end
+		
 		if(!$this->cfg->exists("Names"))
 		{
 			$this->cfg->set("Names",array("Steve","Fuzhu","Server"));
@@ -45,6 +63,11 @@ class Main extends PluginBase implements Listener
             $cfg = $this->getConfig();
             $bnames = $cfg->get("Names");
             $reason = $cfg->get("Reason");
+            $lth = $cfg->get("Length");
+            $rlth = $cfg->get("Lreason");
+			if($lth==0){
+             $this->getLogger()->info(" [BanName] Length limit closed.");
+			}
 			$count = count($bnames);
              $this->getLogger()->info(" [BanName] Enable successfully.");
              $this->getLogger()->info(" [BanName] Load ".$count." names.");
@@ -57,6 +80,8 @@ public function onPlayerJoin(PlayerJoinEvent $event) {
             $cfg = $this->getConfig();
             $bnames = $cfg->get("Names");
             $reason = $cfg->get("Reason");
+            $lth = $cfg->get("Length");
+            $rlth = $cfg->get("Lreason");
 			$p = $event->getPlayer();
 			$pn = $p->getName();
 			if(in_array($pn,$bnames)){
@@ -64,10 +89,17 @@ public function onPlayerJoin(PlayerJoinEvent $event) {
 				msgOP("[BanName] ".$pn." have been kick by BanName Rules.",true);
 				msgOP("[BanName] Reason:".$reason.".",true);
 			}
+			if(!$lth==0){
+				if(strlen($pn)>$lth){
+					$p->kick($rlth);
+				msgOP("[BanName] ".$pn." have been kick by BanName Rules.",true);
+				msgOP("[BanName] Reason:".$rlth.".",true);
+				}
+			}
 }
 
 public function onCommand(CommandSender $sender, Command $cmd, $label, array $arg){
-	if($cmd=="bn" OR $cmd=="banname"){
+	if($cmd=="bn" OR $cmd=="banname"){//TODO:length control
 		if(!isOp($sender)){
 			$sender->sendMessage("[BanName] Sorry you are not adminer.");
 			return false;
